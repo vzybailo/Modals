@@ -4,10 +4,14 @@
       <section>
         <div class="container">
           <button class="btn btnPrimary" @click="modalFirst = !modalFirst">Show first modal</button>
-          <modal 
+          <modal
             :title="title"
-            v-if="modalFirst"
-            @close="modalFirst = !modalFirst">          
+            v-show="modalFirst"
+            @close="modalFirst = !modalFirst">
+            <div slot="body">
+                 <p>Текст</p>
+              <button class="btn btnPrimary" @click="modalFirst = !modalFirst">well done</button>
+            </div>
           </modal>
         </div>
       </section>
