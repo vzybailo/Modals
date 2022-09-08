@@ -1,9 +1,9 @@
 <template>
     <modal
-        title="Modal with form"
+        title="Modal with validate form"
         @close="$emit('close')">
         <div slot="body">
-            <form @submit.prevent="onSubmit">
+            <form @submit.prevent="onSubmit" id="form">
                 <!-- name -->
                 <div class="form-item" :class="{ errorInput: $v.name.$error }">
                     <label for="name">
@@ -19,10 +19,10 @@
                 </div>
                 <!-- email -->
                 <div class="form-item" :class="{ errorInput: $v.email.$error }">
-                    <p class="errorText" v-if="!$v.email.required">Field is required</p> 
-                    <p class="errorText" v-if="!$v.email.email">Email is not correct! </p> 
                     <label for="email">
                         Email:
+                        <p class="errorText" v-if="!$v.email.required">Field is required</p> 
+                        <p class="errorText" v-if="!$v.email.email">Email is not correct! </p> 
                         <input 
                             id="email" 
                             v-model="email"
@@ -31,21 +31,28 @@
                     </label>
                 </div> 
                 <!-- password -->
-                <div class="form-item">
-                    <div class="form-password" :class="{ 'form-password--error': $v.password.$error }">
-                        <label for="" class="form__label">
-                            Password
-                            <input type="text" class="form__input" v-model.trim="$v.password.$model">
-                        </label>
-                    </div>
-                    <p class="error" v-if="!$v.password.required">Password is required.</p>
-                    <p class="error" v-if="!$v.password.minLength">Password must have at least {{ $v.password.$params.minLength.min }} letters.</p>
-                    <div class="form-password" :class="{ 'form-password--error': $v.repeatPassword.$error }">
-                         <label for="" class="form__label">
-                            <input type="text" class="form__input" v-model.trim="$v.repeatPassword.$model">
-                        </label>
-                    </div>
-                    <div class="error" v-if="!$v.repeatPassword.sameAsPassword">Passwords must be identical.</div>
+                <div class="form-item" :class="{ errorInput: $v.password.$error }">
+                    <label class="form__label">
+                        Password
+                        <p class="errorText" v-if="!$v.password.required">Password is required.</p>  
+                        <p class="errorText" v-if="!$v.password.minLength">Password must have at least {{ $v.password.$params.minLength.min }} letters.</p>    
+                        <input 
+                            type="password" 
+                            class="form__input" 
+                            v-model.trim="$v.password.$model"
+                            :class="{ error: $v.password.$error }">
+                    </label>                      
+                </div>
+                <div class="form-item" :class="{ errorInput: $v.repeatPassword.$error }">                               
+                    <label class="form__label">
+                        Repeat password
+                        <p class="errorText" v-if="!$v.repeatPassword.sameAsPassword">Passwords must be identical.</p> 
+                        <input 
+                            type="password" 
+                            class="form__input" 
+                            v-model.trim="$v.repeatPassword.$model"
+                            :class="{ error: $v.repeatPassword.$error }">
+                    </label>    
                 </div>
                 <!-- button         -->
                 <button class="btn btnPrimary">submit</button>
@@ -55,17 +62,24 @@
 </template>
 
 <script>
-import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
+import { required, sameAs, minLength, email } from 'vuelidate/lib/validators'
 import modal from '@/components/UI/Modal.vue'
 
 export default {
     components: {
         modal
     },
+    props: {
+      modalValidate: {
+        type: Boolean,
+      }
+    },
     data () {
         return {
             email: '',
-            name: ''
+            name: '',
+            password: '',
+            repeatPassword: ''
         }
     },
     validations: {
@@ -91,16 +105,22 @@ export default {
             if (!this.$v.$invalid){
                 const user = {
                     name: this.name,
-                    email: this.email
+                    email: this.email,
+                    password: this.password
                 }
                 console.log(user)
 
                 //done
                 this.name = '',
-                this.email = ''
+                this.email = '',
+                this.password = '',
+                this.repeatPassword = ''
                 this.$v.$reset()
                 this.$emit('close')
             }
+        },
+        resetForm() {
+            this.modalValidate == false
         }
     }
 }
