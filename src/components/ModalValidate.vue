@@ -1,7 +1,7 @@
 <template>
     <modal
         title="Modal with validate form"
-        @close="$emit('close')">
+        @close="resetForm">
         <div slot="body">
             <form @submit.prevent="onSubmit" id="form">
                 <!-- name -->
@@ -120,7 +120,12 @@ export default {
             }
         },
         resetForm() {
-            this.modalValidate == false
+            this.name = '',
+            this.email = '',
+            this.password = '',
+            this.repeatPassword = ''
+            this.$v.$reset()
+            this.$emit('close')
         }
     }
 }
