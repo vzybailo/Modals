@@ -1,78 +1,64 @@
 <template>
-  <div class="wrapper">
-    <div class="wrapper-content">
-      <section>
-        <div class="container">
-          <!-- first modal -->
-          <button class="btn btnPrimary" @click="modalFirst = !modalFirst">Show first modal</button>
-          <modal
-            :title="title"
-            v-show="modalFirst"
-            @close="modalFirst = false">
-            <div slot="body">
-                 <p>Текст</p>
-              <button class="btn btnPrimary" @click="modalFirst = !modalFirst">well done</button>
-            </div>
-          </modal>
-          <!-- second modal -->
-          <button class="btn btnPrimary" @click="modalSecond.show = !modalSecond.show">Show modal with form</button>
-          <modal
-            title="Modal with form"
-            v-show="modalSecond.show"
-            @close="modalSecond.show = false">
-            <div slot="body">
-              <form @submit.prevent="submitSecondForm">
-                <label>Name:</label>
-                <input type="text" v-model="modalSecond.name">
-                <label>Email:</label>
-                <input type="email" v-model="modalSecond.email">
-                <button class="btn btnPrimary">submit</button>
-              </form>
-            </div>
-          </modal>
-          <!-- modal with validate -->
-          <button class="btn btnPrimary" @click="modalValidate = !modalValidate">Show modal with validate form</button>
-          <modalvalidate v-show="modalValidate" @close="modalValidate = false"/>
+  <div id="app">
+    <header class="navbar">
+      <div class="container">
+        <div class="navbar-content">
+          <div class="logo">Modals</div>
+          <ul class="navbar-list">
+            <li class="navbar-item" v-for="link in links" :key="link.title">
+              <router-link class="navbar-link" :title="link.title" :to="link.url">{{link.title}}</router-link>
+            </li>
+          </ul>
         </div>
-      </section>
-    </div>
+      </div>
+    </header>
+    <router-view/>
+
+  <!-- footer -->
+
   </div>
 </template>
 
 <script>
-import modal from '@/components/UI/Modal.vue'
-import modalvalidate from '@/components/ModalValidate.vue'
-
-export default {
-  components: { 
-    modal, modalvalidate 
-    },
-  data () {
-    return {
-      modalFirst: false,
-      modalSecond: {
-        show: false,
-        name: '',
-        email: ''
-      },
-      modalValidate: false,
-      title: 'First modal window'
-    }
-  },
-  methods: {
-    submitSecondForm() {
-      console.log({
-        name: this.modalSecond.name,
-        email: this.modalSecond.email
-      })
-      this.modalSecond.name = ''
-      this.modalSecond.email = ''
-      this.modalSecond.show = false
+  export default {
+    data() {
+      return {
+        links: [
+          {title: 'Examples form', url: '/form-examples' },
+          {title: 'Form with password validation', url: '/form-valid' },
+          {title: 'Form with login and auth', url: '/form-login-auth' }
+        ],
+        modalValidate: false
+      }
     }
   }
-}
 </script>
 
-<style>
 
+<style lang="scss">
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
+}
+.navbar-link {
+  &.router-link-exact-active {
+    color: #5247e7;
+  }
+}
 </style>

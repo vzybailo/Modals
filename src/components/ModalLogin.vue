@@ -1,21 +1,9 @@
 <template>
     <modal
-        title="Modal with validate form"
+        title="Log in"
         @close="resetForm">
         <div slot="body">
-            <form @submit.prevent="onSubmit" id="form">
-                <!-- name -->
-                <div class="form-item" :class="{ errorInput: $v.name.$error }">
-                    <label for="name">
-                        Name:
-                        <p class="errorText" v-if="!$v.name.required">Field is required</p>
-                        <p class="errorText" v-if="!$v.name.minLength">Name must have at least {{ $v.name.$params.minLength.min }}! </p>
-                        <input 
-                            v-model="name" 
-                            :class="{error: $v.name.$error}"
-                            @change="$v.name.$touch()">
-                    </label>
-                </div>
+            <form @submit.prevent="onSubmit">
                 <!-- email -->
                 <div class="form-item" :class="{ errorInput: $v.email.$error }">
                     <label for="email">
@@ -41,50 +29,29 @@
                             :class="{ error: $v.password.$error }">
                     </label>                      
                 </div>
-                <div class="form-item" :class="{ errorInput: $v.repeatPassword.$error }">                               
-                    <label class="form__label">
-                        Repeat password
-                        <p class="errorText" v-if="!$v.repeatPassword.sameAsPassword">Passwords must be identical.</p> 
-                        <input 
-                            type="password" 
-                            class="form__input" 
-                            v-model.trim="$v.repeatPassword.$model"
-                            :class="{ error: $v.repeatPassword.$error }">
-                    </label>    
-                </div>
                 <!-- button         -->
-                <button class="btn btnPrimary">submit</button>
+                <button class="btn btnPrimary">Log in</button>
             </form>
+            <p @click="$emit('showAuth')" class="btn-change">I don`t have an account</p>
         </div>
-    </modal>
+        </modal>
 </template>
 
 <script>
-import { required, sameAs, minLength, email } from 'vuelidate/lib/validators'
+import { required, minLength, email } from 'vuelidate/lib/validators'
 import modal from '@/components/UI/Modal.vue'
 
 export default {
     components: {
         modal
     },
-    props: {
-      modalValidate: {
-        type: Boolean,
-      }
-    },
     data () {
         return {
             email: '',
-            name: '',
             password: '',
-            repeatPassword: ''
         }
     },
     validations: {
-        name: {
-            required,
-            minLength: minLength(4)
-        },
         email: {
             required,
             email
@@ -92,9 +59,6 @@ export default {
         password: {
             required,
             minLength: minLength(6)
-        },
-        repeatPassword: {
-            sameAsPassword: sameAs('password')
         }
     },
     methods: {
@@ -102,26 +66,21 @@ export default {
             this.$v.$touch()
             if (!this.$v.$invalid){
                 const user = {
-                    name: this.name,
                     email: this.email,
                     password: this.password
                 }
                 console.log(user)
 
                 //done
-                this.name = '',
                 this.email = '',
                 this.password = '',
-                this.repeatPassword = ''
                 this.$v.$reset()
                 this.$emit('close')
             }
         },
         resetForm() {
-            this.name = '',
             this.email = '',
             this.password = '',
-            this.repeatPassword = ''
             this.$v.$reset()
             this.$emit('close')
         }
@@ -143,5 +102,8 @@ export default {
     } 
     input.error {
         border-color: #e91b1b
+    }
+    .modal-content {
+        text-align: center;
     }
 </style>

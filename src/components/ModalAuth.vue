@@ -1,21 +1,9 @@
 <template>
     <modal
-        title="Modal with validate form"
+        title="Register an account"
         @close="resetForm">
         <div slot="body">
-            <form @submit.prevent="onSubmit" id="form">
-                <!-- name -->
-                <div class="form-item" :class="{ errorInput: $v.name.$error }">
-                    <label for="name">
-                        Name:
-                        <p class="errorText" v-if="!$v.name.required">Field is required</p>
-                        <p class="errorText" v-if="!$v.name.minLength">Name must have at least {{ $v.name.$params.minLength.min }}! </p>
-                        <input 
-                            v-model="name" 
-                            :class="{error: $v.name.$error}"
-                            @change="$v.name.$touch()">
-                    </label>
-                </div>
+            <form @submit.prevent="onSubmit">
                 <!-- email -->
                 <div class="form-item" :class="{ errorInput: $v.email.$error }">
                     <label for="email">
@@ -53,10 +41,11 @@
                     </label>    
                 </div>
                 <!-- button         -->
-                <button class="btn btnPrimary">submit</button>
+                <button class="btn btnPrimary">Register</button>
             </form>
+            <p @click="$emit('showLogin')" class="btn-change">I have an account</p>
         </div>
-    </modal>
+        </modal>
 </template>
 
 <script>
@@ -67,24 +56,19 @@ export default {
     components: {
         modal
     },
-    props: {
-      modalValidate: {
-        type: Boolean,
-      }
-    },
     data () {
         return {
             email: '',
-            name: '',
             password: '',
             repeatPassword: ''
         }
     },
+    props: {
+        auth: {
+            type: Object
+        }
+    },
     validations: {
-        name: {
-            required,
-            minLength: minLength(4)
-        },
         email: {
             required,
             email
@@ -102,14 +86,12 @@ export default {
             this.$v.$touch()
             if (!this.$v.$invalid){
                 const user = {
-                    name: this.name,
                     email: this.email,
                     password: this.password
                 }
                 console.log(user)
 
                 //done
-                this.name = '',
                 this.email = '',
                 this.password = '',
                 this.repeatPassword = ''
@@ -118,7 +100,6 @@ export default {
             }
         },
         resetForm() {
-            this.name = '',
             this.email = '',
             this.password = '',
             this.repeatPassword = ''
@@ -143,5 +124,9 @@ export default {
     } 
     input.error {
         border-color: #e91b1b
+    }
+    .btn-change {
+       font-size: 12px;
+       cursor: pointer;
     }
 </style>
